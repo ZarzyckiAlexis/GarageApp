@@ -1,28 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http; // Import de package pour les requêtes HTTP
 
-
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class Register extends StatefulWidget {
+  const Register({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _LoginState();
+  State<StatefulWidget> createState() => _RegisterState();
 }
 
-class _LoginState extends State<Login> {
-
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +49,8 @@ class _LoginState extends State<Login> {
                     "Entrez votre nom d'utilisateur",
                   ),
                   inputStyle("Mot de passe", "Entrez votre mot de passe"),
+                  inputStyle("Confirmer mot de passe", "Confirmez votre mot de passe"),
+
                 ],
               ),
             ),
@@ -82,7 +71,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   child: Text(
-                    "Se connecter",
+                    "S'inscrire",
                     style: GoogleFonts.notoSans(
                       textStyle: const TextStyle(
                         fontSize: 24,
@@ -103,7 +92,7 @@ class _LoginState extends State<Login> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: "Pas de compte? ",
+                      text: "Déjà un compte? ",
                       style: GoogleFonts.notoSans(
                         textStyle: const TextStyle(
                           fontSize: 24,
@@ -113,7 +102,7 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     TextSpan(
-                      text: "S'inscrire",
+                      text: "Se connecter",
                       style: GoogleFonts.notoSans(
                         textStyle: const TextStyle(
                           fontSize: 24,
@@ -124,7 +113,7 @@ class _LoginState extends State<Login> {
                       ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
-                          Navigator.of(context).pushNamed("/register");
+                          Navigator.of(context).pushNamed("/login");
                         },
                     ),
                   ],
@@ -178,55 +167,5 @@ class _LoginState extends State<Login> {
       ],
     );
   }
-
-  void _login() async {
-    String username = usernameController.text;
-    String password = passwordController.text;
-
-    // Remplacez ceci par votre URL d'API de connexion
-    String apiUrl = 'https://exemple.com/api/login';
-
-    // Les données à envoyer à l'API (username et password)
-    Map<String, String> data = {
-      'username': username,
-      'password': password,
-    };
-
-    // Envoi de la requête POST à l'API
-    var response = await http.post(
-      Uri.parse(apiUrl),
-      body: data,
-    );
-
-    // Vérification de la réponse de l'API
-    if (response.statusCode == 200) {
-      // Si la connexion est réussie
-      var jsonResponse = json.decode(response.body);
-      // Traitez les données de la réponse ici, telles que le token ou les détails de l'utilisateur
-      // Exemple : var token = jsonResponse['token'];
-
-      // Naviguez vers une nouvelle page après la connexion réussie
-      Navigator.pushReplacementNamed(context, '/home'); // Remplacez '/home' par votre route
-    } else {
-      // Si la connexion échoue, affichez un message d'erreur
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Erreur de connexion'),
-            content: const Text('Identifiant ou mot de passe incorrect.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
-    }
-  }
-
 }
+
