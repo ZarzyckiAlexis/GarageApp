@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import './utils.dart';
+
 
 import 'carDetails.dart';
 
@@ -15,6 +15,7 @@ class Cars extends StatefulWidget {
 class _CarsState extends State<Cars> {
   Map<String, dynamic>? userData;
   Future<List<dynamic>>? carsData;
+  Utils utils = Utils();
 
 
   @override
@@ -24,7 +25,7 @@ class _CarsState extends State<Cars> {
   }
 
   Future<void> _loadUserData() async {
-    Map<String, dynamic>? userlocalData = await getUserLocalData();
+    Map<String, dynamic>? userlocalData = await Utils.getUserLocalData();
     setState(() {
       userData = userlocalData;
       _loadCarsData();
@@ -32,7 +33,7 @@ class _CarsState extends State<Cars> {
   }
 
   Future<void> _loadCarsData() async {
-    List<dynamic>? carslocalData = await getCarsLocalData();
+    List<dynamic>? carslocalData = await Utils.getCarsLocalData();
     setState(() {
       carsData = Future.value(carslocalData ?? []);
     });
@@ -119,7 +120,7 @@ class _CarsState extends State<Cars> {
               height: 60,
               child: ElevatedButton(
                 onPressed: () {
-                  navigateTo("/profile");
+                  Utils.navigateTo(context, "/profile");
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
@@ -146,34 +147,4 @@ class _CarsState extends State<Cars> {
     );
   }
 
-  Future<Map<String, dynamic>?> getUserLocalData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? jsonData = prefs.getString('userData');
-
-    if (jsonData != null) {
-      Map<String, dynamic> decodedData = json.decode(jsonData);
-      return decodedData;
-    } else {
-      return null;
-    }
-  }
-
-  Future<List<dynamic>?> getCarsLocalData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? jsonString = prefs.getStringList('userCars');
-
-    if (jsonString != null) {
-      List<dynamic> decodedData = [];
-      for (String item in jsonString) {
-        decodedData.add(json.decode(item));
-      }
-      return decodedData;
-    } else {
-      return null;
-    }
-  }
-
-  navigateTo(String path) {
-    Navigator.of(context).pushReplacementNamed(path);
-  }
 }

@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'utils.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -12,6 +11,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   Map<String, dynamic>? userData;
+  Utils utils = Utils();
 
   @override
   void initState() {
@@ -20,7 +20,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _loadUserData() async {
-    Map<String, dynamic>? localData = await getUserLocalData();
+    Map<String, dynamic>? localData = await Utils.getUserLocalData();
 
     setState(() {
       userData = localData;
@@ -87,7 +87,7 @@ class _ProfileState extends State<Profile> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    navigateTo("/cars");
+                    Utils.navigateTo(context, "/cars");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -119,7 +119,7 @@ class _ProfileState extends State<Profile> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    navigateTo("/car/add");
+                    Utils.navigateTo(context, "/car/add");
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -151,7 +151,7 @@ class _ProfileState extends State<Profile> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
-                    _logOut();
+                    utils.logOut(context);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -178,35 +178,4 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
-
-  void _logOut() async {
-    await clearDataLocally();
-    navigateTo("/login");
-  }
-
-  Future<void> clearDataLocally() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-  }
-
-  Future<Map<String, dynamic>?> getUserLocalData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Récupérer les données à partir de SharedPreferences
-    String? jsonData = prefs.getString('userData');
-
-    if (jsonData != null) {
-      // Si des données sont présentes, les décoder depuis JSON en Map
-      Map<String, dynamic> decodedData = json.decode(jsonData);
-      return decodedData;
-    } else {
-      // Si aucune donnée n'est trouvée, retourner null
-      return null;
-    }
-  }
-
-  navigateTo(String path) {
-    Navigator.of(context).pushReplacementNamed(path);
-  }
-
 }

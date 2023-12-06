@@ -1,12 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/io_client.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'utils.dart';
 class EditCarDetails extends StatefulWidget {
   final Map<String, dynamic> carData;
 
@@ -18,7 +12,7 @@ class EditCarDetails extends StatefulWidget {
 
 class _EditCarDetailsState extends State<EditCarDetails> {
   late final Map<String, dynamic> carData;
-
+  Utils utils = Utils();
   late TextEditingController brandController;
   late TextEditingController modelController;
   late TextEditingController customNameController;
@@ -67,15 +61,15 @@ class _EditCarDetailsState extends State<EditCarDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 60),
-              inputStyle("Marque", "", brandController),
+              utils.inputStyle("Marque", "", brandController),
               const SizedBox(height: 10), // Espace réduit entre les champs
-              inputStyle("Modèle", "", modelController),
+              utils.inputStyle("Modèle", "", modelController),
               const SizedBox(height: 10), // Espace réduit entre les champs
-              inputStyle("Nom personnalisé", "", customNameController),
+              utils.inputStyle("Nom personnalisé", "", customNameController),
               const SizedBox(height: 10), // Espace réduit entre les champs
-              inputStyle("Chevaux", "", horsePowerController),
+              utils.inputStyle("Chevaux", "", horsePowerController),
               const SizedBox(height: 10), // Espace réduit entre les champs
-              inputStyle("Kilométrage", "", kilometersController),
+              utils.inputStyle("Kilométrage", "", kilometersController),
               const SizedBox(height: 10), // Espace réduit entre les champs
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
@@ -89,7 +83,7 @@ class _EditCarDetailsState extends State<EditCarDetails> {
                       carData['customName'] = customNameController.text;
                       carData['horsePower'] = horsePowerController.text;
                       carData['kilometersAge'] = kilometersController.text;
-                      _put(carData);
+                      utils.putCar(carData, context);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -118,7 +112,7 @@ class _EditCarDetailsState extends State<EditCarDetails> {
                   height: 60,
                   child: ElevatedButton(
                     onPressed: () {
-                      _navigateTo("/cars");
+                      Utils.navigateTo(context, "/cars");
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
@@ -146,171 +140,5 @@ class _EditCarDetailsState extends State<EditCarDetails> {
       ),
     );
   }
-
-
-  void _put(Map<String, dynamic> data) async {
-    String apiPutCarUrl = "https://10.0.2.2:7230/api/Cars";
-    String apiFetchCarsOwnerUrl = "https://10.0.2.2:7230/api/Cars/CarsByOwnerId";
-
-    Map<String, String> headers = {
-      'Content-Type': 'application/json',
-    };
-
-    try {
-      int id = data['id'];
-      var response = await _sendPutRequest("$apiPutCarUrl/$id", headers, data);
-      if (response.statusCode == 204) {
-        try {
-          int ownerId = data['ownerId'];
-          var responsefetchCarList = await _fetchCarList("$apiFetchCarsOwnerUrl/$ownerId", headers);
-          if (responsefetchCarList.statusCode == 200) {
-            var jsonResponseCars = json.decode(responsefetchCarList.body);
-            if (jsonResponseCars is List<dynamic>) {
-              List<dynamic> userCars = jsonResponseCars;
-              await saveResponseLocallyList(userCars, 'userCars');
-            } else if (jsonResponseCars is Map<String, dynamic>) {
-              Map<String, dynamic> userCars = jsonResponseCars;
-              await saveResponseLocally(userCars, 'userCars');
-            }
-            _navigateTo("/cars");
-            // Erreur : No cars found for this owner
-          } else if (responsefetchCarList.statusCode == 404){
-            Map<String, dynamic> userCars = {};
-            await saveResponseLocally(userCars, 'userCars');
-            _navigateTo("/cars");
-          } else {
-            _showErrorDialog('Erreur', 'Impossible de récupéré les véhicules via l\'API.');
-          }
-        } catch (error) {
-          _showErrorDialog('Erreur', 'Erreur: $error');
-        }
-      } else {
-        _showErrorDialog('Erreur', 'Impossible de modifier cette voiture dans l\'API.');
-      }
-    } catch (error) {
-      _showErrorDialog('Erreur', 'Erreur: $error');
-    }
-  }
-
-  Future<http.Response> _sendPutRequest(String apiUrl, Map<String, String> headers, Map<String, dynamic> data) async {
-    String requestBody = json.encode(data);
-
-    HttpClient httpClient = HttpClient()..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-
-    IOClient ioClient = IOClient(httpClient);
-
-    try {
-      var response = await ioClient.put(
-        Uri.parse(apiUrl),
-        headers: headers,
-        body: requestBody,
-      );
-
-      return http.Response(response.body, response.statusCode);
-    } catch (e) {
-      rethrow;
-    } finally {
-      ioClient.close();
-    }
-  }
-
-  Future<http.Response> _fetchCarList(String apiUrl, Map<String, String> headers) async {
-    HttpClient httpClient = HttpClient()..badCertificateCallback = ((X509Certificate cert, String host, int port) => true);
-    IOClient ioClient = IOClient(httpClient);
-
-    try {
-      var response = await ioClient.get(
-        Uri.parse(apiUrl),
-        headers: headers,
-      );
-      print(response.body);
-      print(response.statusCode);
-      return http.Response(response.body, response.statusCode);
-    } catch (e) {
-      rethrow;
-    } finally {
-      ioClient.close();
-    }
-  }
-
-  Future<void> saveResponseLocally(Map<String, dynamic> jsonResponse, String strName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String jsonData = json.encode(jsonResponse);
-    await prefs.setString(strName, jsonData);
-  }
-
-  Future<void> saveResponseLocallyList(List<dynamic> jsonResponse, String strName) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> jsonDataList = jsonResponse.map((item) => json.encode(item)).toList();
-    await prefs.setStringList(strName, jsonDataList);
-  }
-
-  void _showErrorDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _navigateTo(String path) {
-    Navigator.of(context).pushReplacementNamed(path);
-  }
-
-  Widget inputStyle(String title, String hintText, TextEditingController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          title,
-          style: GoogleFonts.notoSans(
-            textStyle: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              decoration: TextDecoration.none,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10), // Réduction de la taille ici
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
-              )
-            ],
-          ),
-          child: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(left: 10),
-              hintText: hintText,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10), // Réduction de la taille ici
-      ],
-    );
-  }
-
 
 }
