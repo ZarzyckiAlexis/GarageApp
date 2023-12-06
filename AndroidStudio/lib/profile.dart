@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'utils.dart';
@@ -11,7 +12,9 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   Map<String, dynamic>? userData;
+  String? imagePath;
   Utils utils = Utils();
+  late String imagePathString;
 
   @override
   void initState() {
@@ -24,6 +27,15 @@ class _ProfileState extends State<Profile> {
 
     setState(() {
       userData = localData;
+    });
+    _loadImagePath();
+  }
+
+  Future<void> _loadImagePath() async {
+    String? localData = await Utils.getImageLocalData();
+    setState(() {
+      imagePath = localData;
+      imagePathString = imagePath ?? 'null';
     });
   }
 
@@ -55,28 +67,37 @@ class _ProfileState extends State<Profile> {
             const SizedBox(
               height: 20,
             ),
-            userData != null
-                ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Nom d\'utilisateur: ${userData!['username']}',
-                    style: const TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            if (userData != null) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (imagePath != null && imagePath != 'null') ...[
+                      CircleAvatar(
+                        radius: 60,
+                        backgroundImage: FileImage(File(imagePathString)),
+                      ),
+                      const SizedBox(width: 20), // Espacement entre la photo et le texte
+                    ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Nom d\'utilisateur: ${userData!['username']}',
+                          style: const TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 10.0),
-                ],
+                  ],
+                ),
               ),
-            )
-
-                : const Center(
-              child: CircularProgressIndicator(), // Afficher une indication de chargement si les données sont en cours de chargement
-            ),
+            ],
             const SizedBox(
               height: 20,
             ),

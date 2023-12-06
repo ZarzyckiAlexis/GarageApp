@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Utils {
 
@@ -35,6 +36,11 @@ class Utils {
     } else {
       return null;
     }
+  }
+
+  static Future<String?> getImageLocalData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('imagePath');
   }
 
   static Future<List<dynamic>?> getCarsLocalData() async {
@@ -445,7 +451,21 @@ class Utils {
 
   Future<void> clearDataLocally() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    await prefs.remove('userData');
+    await prefs.remove('userCars');
+  }
+
+  Future<void> setImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('imagePath', pickedFile.path);
+    } else {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('imagePath', "null");
+    }
   }
 
 }

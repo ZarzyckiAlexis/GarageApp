@@ -71,6 +71,38 @@ class _RegisterState extends State<Register> {
                 height: 60,
                 child: ElevatedButton(
                   onPressed: () {
+                    utils.setImage();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(
+                    "Ajouter une photo",
+                    style: GoogleFonts.notoSans(
+                      textStyle: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50),
+              child: SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {
                     String username = usernameController.text;
                     String password = passwordController.text;
                     String confPassword = confPasswordController.text;
