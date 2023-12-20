@@ -13,10 +13,14 @@ class AddCar extends StatefulWidget {
 
 class _AddCarState extends State<AddCar> {
 
+  // Donnée Utilisateur
   Map<String, dynamic>? userData;
+  // Donnée des voitures de l'utilisateur
   late final Map<String, dynamic> carData;
+  // On initialise la librairie d'Utilitaire
   Utils utils = Utils();
 
+  // On initialise les Input
   late TextEditingController brandController;
   late TextEditingController modelController;
   late TextEditingController customNameController;
@@ -35,6 +39,7 @@ class _AddCarState extends State<AddCar> {
     carData = {};
   }
 
+  // On récupère les données de l'utilsateur grâce à la librairie
   Future<void> _loadUserData() async {
     Map<String, dynamic>? localData = await Utils.getUserLocalData();
     setState(() {
@@ -64,7 +69,7 @@ class _AddCarState extends State<AddCar> {
   Widget _content() {
     return Scaffold(
       backgroundColor: Colors.black87,
-      body: SingleChildScrollView( // Ajout d'un SingleChildScrollView
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -72,15 +77,15 @@ class _AddCarState extends State<AddCar> {
             children: [
               const SizedBox(height: 60),
               utils.inputStyle("Marque", "Entrez la marque", brandController),
-              const SizedBox(height: 10), // Espace réduit entre les champs
+              const SizedBox(height: 10),
               utils.inputStyle("Modèle", "Entrez le modèle", modelController),
-              const SizedBox(height: 10), // Espace réduit entre les champs
+              const SizedBox(height: 10),
               utils.inputStyle("Nom personnalisé", "Entrez le nom personnalisé", customNameController),
-              const SizedBox(height: 10), // Espace réduit entre les champs
+              const SizedBox(height: 10),
               utils.inputStyle("Chevaux", "Entrez le nombre de chevaux", horsePowerController),
-              const SizedBox(height: 10), // Espace réduit entre les champs
+              const SizedBox(height: 10),
               utils.inputStyle("Kilométrage", "Entrez le nombre de kilomètres", kilometersController),
-              const SizedBox(height: 10), // Espace réduit entre les champs
+              const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                 child: SizedBox(

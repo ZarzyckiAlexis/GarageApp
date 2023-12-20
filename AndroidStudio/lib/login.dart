@@ -13,8 +13,10 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
+  // Permet de créer les input
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  // On instance la librairie Utils
   Utils utils = Utils();
 
   @override

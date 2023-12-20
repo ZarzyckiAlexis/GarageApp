@@ -11,8 +11,11 @@ class EditCarDetails extends StatefulWidget {
 }
 
 class _EditCarDetailsState extends State<EditCarDetails> {
+  // Permet de stocker les données de la voiture
   late final Map<String, dynamic> carData;
+  // Permet d'instancier la Librairie
   Utils utils = Utils();
+  // Permet de gérer les input
   late TextEditingController brandController;
   late TextEditingController modelController;
   late TextEditingController customNameController;
@@ -23,6 +26,7 @@ class _EditCarDetailsState extends State<EditCarDetails> {
   void initState() {
     super.initState();
     carData = widget.carData;
+    // On pré-rempli les input avec les données existante.
     brandController = TextEditingController(text: carData['brandName']);
     modelController = TextEditingController(text: carData['modelName']);
     customNameController = TextEditingController(text: carData['customName']);

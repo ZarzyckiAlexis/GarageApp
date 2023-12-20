@@ -13,8 +13,11 @@ class Cars extends StatefulWidget {
 }
 
 class _CarsState extends State<Cars> {
+  // Permet de stocker les données de l'utilisateur
   Map<String, dynamic>? userData;
+  // Permet de stocker les données des voitures de l'utilisateur
   Future<List<dynamic>>? carsData;
+  // Permet d'instancier la librairie
   Utils utils = Utils();
 
 
@@ -24,14 +27,16 @@ class _CarsState extends State<Cars> {
     _loadUserData();
   }
 
+  // Permet de récupéré les données de l'utilisateur grâce à la librairie
   Future<void> _loadUserData() async {
     Map<String, dynamic>? userlocalData = await Utils.getUserLocalData();
     setState(() {
       userData = userlocalData;
-      _loadCarsData();
+      _loadCarsData(); // On appelle la fonction pour récupéré les voitures de l'utilisateur
     });
   }
 
+  // Permet de récupéré les voitures de l'utilisateur grâce à la librairie
   Future<void> _loadCarsData() async {
     List<dynamic>? carslocalData = await Utils.getCarsLocalData();
     setState(() {

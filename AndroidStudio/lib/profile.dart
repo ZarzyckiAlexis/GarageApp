@@ -23,6 +23,7 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _loadUserData() async {
+    // Pour stocker la photo de l'utilisateur
     Map<String, dynamic>? localData = await Utils.getUserLocalData();
 
     setState(() {
@@ -31,6 +32,7 @@ class _ProfileState extends State<Profile> {
     _loadImagePath();
   }
 
+  // On récupère l'image de l'utilisateur
   Future<void> _loadImagePath() async {
     String? localData = await Utils.getImageLocalData();
     setState(() {

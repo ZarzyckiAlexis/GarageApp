@@ -17,10 +17,11 @@ class _SplashState extends State<Splash> {
   @override
   void initState(){
     super.initState();
-    startTimer();
+    startTimer(); // On appelle le timer au lancement de l'app
   }
 
   startTimer(){
+    // On crée un timer qui permet de laisser le splash 4 secondes
     var duration = const Duration(seconds: 4);
     return Timer(duration, route);
   }

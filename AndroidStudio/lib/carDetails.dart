@@ -14,7 +14,9 @@ class CarDetails extends StatefulWidget {
 }
 
 class _CarDetailsState extends State<CarDetails> {
+  // Permet de stocké les données de la voiture séléctionnée
   late final Map<String, dynamic> carData;
+  // Permet d'utiliser la librairie "Utils"
   Utils utils = Utils();
 
   @override

@@ -12,15 +12,16 @@ import 'carDetails.dart';
 void main(){
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
+    // On configure les routes du projet
     routes: {
-      "/":(context) => const Splash(),
-      "/login":(context) => const Login(),
-      "/register":(context) => const Register(),
-      "/profile":(context) => const Profile(),
-      '/cars':(context) => const Cars(),
-      '/car': (context) => const CarDetails(carData: {},),
-      '/car/edit': (context) => const EditCarDetails(carData: {},),
-      '/car/add': (context) => const AddCar()
+      "/":(context) => const Splash(), // Redirige vers le SplashScreen
+      "/login":(context) => const Login(), // Redirige vers le Login
+      "/register":(context) => const Register(), // Redigrige vers le Register
+      "/profile":(context) => const Profile(), // Redirige vers le UserProfile
+      '/cars':(context) => const Cars(), // Redirige vers la liste des voitures
+      '/car': (context) => const CarDetails(carData: {},), // Redirige vers le détail d'une voiture
+      '/car/edit': (context) => const EditCarDetails(carData: {},), // Redirige vers la modification d'une voiture
+      '/car/add': (context) => const AddCar() // Redirige vers la création d'une voiture
     },
   ));
 

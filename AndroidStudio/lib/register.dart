@@ -12,9 +12,11 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
 
+  // On créer les input
   TextEditingController usernameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confPasswordController = TextEditingController();
+  // On instancie la librairie
   Utils utils = Utils();
 
   @override
