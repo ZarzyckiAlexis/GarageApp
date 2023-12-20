@@ -86,7 +86,7 @@ class _ProfileState extends State<Profile> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nom d\'utilisateur: ${userData!['username']}',
+                          '${userData!['username']}',
                           style: const TextStyle(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
